@@ -1,9 +1,9 @@
 package com.study.pipeloadcalculation.model;
 
 import com.study.pipeloadcalculation.service.CalculationService;
+import com.study.pipeloadcalculation.util.GeometryUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class Pipe implements Comparable<Pipe>, Telescopable {
 	
@@ -91,7 +91,7 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	
 	private Geometry jtsCircle(Coordinate center, int radius) {
 //		return geometryFactory.createPoint(center).buffer(radius); // default n-gon
-		return CalculationService.adaptivePolygon(center, radius, CalculationService.k3); // more precise n-gon
+		return GeometryUtils.adaptivePolygon(center, radius, CalculationService.k3); // more precise n-gon
 	}
 	
 	

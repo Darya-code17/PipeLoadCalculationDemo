@@ -26,15 +26,15 @@ public class MyAppController {
 	}
 	
 	
+	
 	@FXML
 	private void initialize() {
 		loadData();
 		calculationsReset();
-		
 		calculationsMake();
-		
 		drawResult();
 	}
+	
 	
 	
 	
