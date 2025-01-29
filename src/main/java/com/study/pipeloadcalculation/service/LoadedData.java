@@ -2,9 +2,6 @@ package com.study.pipeloadcalculation.service;
 
 import com.study.pipeloadcalculation.model.Pipe;
 import com.study.pipeloadcalculation.model.TruckTrailer;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;

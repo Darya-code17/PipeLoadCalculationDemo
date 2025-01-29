@@ -2,8 +2,11 @@ package com.study.pipeloadcalculation.controller;
 
 import com.study.pipeloadcalculation.service.CalculationService;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+
+import java.util.List;
 
 public class MyAppController {
 	
@@ -14,6 +17,7 @@ public class MyAppController {
 	private Pane drawPane;
 	
 	private CalculationService calculationService;
+	
 	
 	@FXML
 	protected void onHelloButtonClick() { // todo deprecate later
@@ -37,20 +41,35 @@ public class MyAppController {
 	
 	
 	
-	
-	private void loadData(){
+	private void loadData() {
 		calculationService.loadData(); // todo Repository class ?
 	}
-	private void calculationsReset(){
+	
+	
+	private void calculationsReset() {
 		calculationService.calculationsReset();
 	}
-	private void calculationsMake(){
+	
+	
+	private void calculationsMake() {
 		calculationService.calculationsMake();
 	}
-	private void drawResult(){
-		drawPane.getChildren().addAll(
-				calculationService.nodesToDraw()
-		);
-		
+	
+	
+	
+	private void drawResult() {
+		addNodesWithStyle(calculationService.drawTruck(), "dynamic-truckTrailer"); // dynamic styles
+		addNodesWithStyle(calculationService.drawFittedPipes(), "dynamic-pipeFitted");
+		addNodesWithStyle(calculationService.drawUnfittedPipes(), "dynamic-pipeUnfitted");
 	}
+	
+	
+	private void addNodesWithStyle(List<Node> list, String style) {
+		list.forEach(node -> {
+			node.getStyleClass().add(style);
+			drawPane.getChildren().add(node);
+		});
+	}
+	
+	
 }

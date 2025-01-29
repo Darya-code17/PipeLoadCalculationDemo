@@ -5,10 +5,10 @@ import com.study.pipeloadcalculation.model.TruckTrailer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CalculationService {
 	
@@ -25,18 +25,9 @@ public class CalculationService {
 	public CalculationService() {
 		data = new LoadedData();
 		packingData = new PackingData();
-		packingStrategy = new StrategyNew(packingData); // todo (2) initialize at another place
+		packingStrategy = new StrategyOld(packingData); // todo (2) initialize at another place
 	}
 	
-	
-	public List<Node> nodesToDraw() {
-		List<Node> elements = new ArrayList<>();
-		elements.addAll(drawTruck());
-		elements.addAll(drawPipes());
-		elements.addAll(drawDebug());
-		drawTextSummary();
-		return elements;
-	}
 	
 	
 	
@@ -53,7 +44,6 @@ public class CalculationService {
 	
 	
 	
-	
 	public void calculationsReset() {
 		// reset calculations (nullifying telescoped links)
 		data.getPurchaseList().forEach(pipe -> pipe.setTelescopedId(null));
@@ -63,7 +53,6 @@ public class CalculationService {
 		packingData.setUnpackedList(new ArrayList<>());
 		packingData.setTruck(data.getTruck());
 	}
-	
 	
 	
 	
@@ -93,31 +82,28 @@ public class CalculationService {
 	}
 	
 	
-	private List<Node> drawTruck() {
+	
+	public List<Node> drawFittedPipes(){
+		return drawAllPipesFromList(packingData.getPackedList());
+	}
+	
+	public List<Node> drawUnfittedPipes(){
+		return drawAllPipesFromList(packingData.getUnpackedList());
+	}
+	
+	
+	public List<Node> drawTruck() {
 		List<Node> elements = new ArrayList<>();
 		// to draw truck
 		javafx.scene.shape.Polygon javafxTruckPolygon = new javafx.scene.shape.Polygon();
 		for (Coordinate coordinate : packingData.truck.getTruckTrailerPolygon().getCoordinates()) {
 			javafxTruckPolygon.getPoints().addAll(coordinate.x, coordinate.y);
 		}
-		
-		javafxTruckPolygon.setFill(Color.LIGHTSTEELBLUE);
-		javafxTruckPolygon.setStroke(Color.LIGHTSLATEGREY);
 		elements.add(javafxTruckPolygon);
 		return elements;
 	}
 	
 	
-	
-	private  List<Node> drawPipes() {
-		List<Node> elements = new ArrayList<>();
-		// to draw pipes
-		elements.addAll(
-				drawAllPipesFromList(packingData.getPackedList(), Color.rgb(255, 128, 64, 0.75), Color.BLACK));
-		elements.addAll(
-				drawAllPipesFromList(packingData.getUnpackedList(), Color.HOTPINK, Color.BLACK));
-		return elements;
-	}
 	
 	
 	private void drawTextSummary() {
@@ -135,15 +121,13 @@ public class CalculationService {
 	
 	
 	
-	private List<Node> drawAllPipesFromList(ArrayList<Pipe> list, Color colorFill, Color colorStroke) {
-		List<Node> elements = new ArrayList<>();
+	private List<Node> drawAllPipesFromList(ArrayList<Pipe> list) {
+		List<Node> nodes = new ArrayList<>();
 		for (Pipe pipe : list) {
 			Polygon polygon = pipe.toJavaFXPolygon();
-			polygon.setFill(colorFill);
-			polygon.setStroke(colorStroke);
-			elements.add(polygon);
+			nodes.add(polygon);
 		}
-		return elements;
+		return nodes;
 	}
 	
 	
@@ -184,13 +168,8 @@ public class CalculationService {
 	
 	
 	
-	
-	
-	
 	private void catchGeometryToDebug(Geometry g) {
 		var javafxPolygon = getJavaFXPolygon(g);
-		javafxPolygon.setFill(Color.rgb(204, 255, 0, 0.1));
-		javafxPolygon.setStroke(Color.rgb(0, 50, 255, 0.75));
 		data.getDebugList().add(javafxPolygon);
 	}
 	
@@ -217,8 +196,6 @@ public class CalculationService {
 		}
 		return javafxPolygon;
 	}
-	
-	
 	
 	
 	
@@ -283,18 +260,16 @@ public class CalculationService {
 		
 		
 		
-		
 		public ArrayList<Pipe> getPipesOf(TruckTrailer truck) {
-			// returns list of pipes in container // todo (3) next: ... into specified container
+			// returns list of pipes in truckTrailer // todo (3) next: ... into specified truck
 			ArrayList<Pipe> pipes = new ArrayList<>();
 			for (Pipe p : getPackedList()) {
-				if (p.getTelescopedId() == null) { // todo (3) (next: list of containers) id will be checked
+				if (p.getTelescopedId() == null) { // todo (3) (next: list of trucks) id will be checked
 					pipes.add(p);
 				}
 			}
 			return pipes;
 		}
-		
 		
 		
 		

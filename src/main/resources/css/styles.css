@@ -1,0 +1,22 @@
+
+.dynamic-pipeFitted {
+    -fx-fill: rgba(255, 128, 64, 0.75);
+    -fx-stroke: black;
+}
+
+.dynamic-pipeUnfitted {
+    -fx-fill: rgba(255, 105, 180, 0.75);
+    -fx-stroke: rgb(255, 105, 180);
+}
+
+.dynamic-truckTrailer {
+    -fx-fill: rgba(50, 50, 50, 0.50);
+    -fx-stroke: blue;
+}
+
+Pane {
+    -fx-background-color: yellow;
+    -fx-border-color: black;
+    -fx-border-width: 5px;
+    -fx-border-style: solid;
+}

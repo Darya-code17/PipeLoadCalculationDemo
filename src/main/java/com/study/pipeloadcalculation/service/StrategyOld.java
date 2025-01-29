@@ -8,7 +8,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
-public class StrategyOld implements PackingStrategy { // todo rename
+public class StrategyOld implements PackingStrategy {
 	
 	private CalculationService.PackingData calcUtils;
 	
@@ -46,9 +46,8 @@ public class StrategyOld implements PackingStrategy { // todo rename
 	
 	// don't like this method. Needs slight change
 	private boolean isFitByRadialMethod(Coordinate pivot, int currentRadius, int maxRadius, Pipe pipeToPlace, Geometry geometryToFit) {
-		// method in which centers od the circles - are control points of n-gon
+		// method in which centers of the circles - are control points of n-gon
 		// the n-gon increases (and the number of vertices increases accordingly for more precision)
-		// todo: perhaps the order of n-gon points in needed to be different. For example, start on the right (where 0 degrees)
 		
 		boolean fit = false;
 		
@@ -63,8 +62,12 @@ public class StrategyOld implements PackingStrategy { // todo rename
 			gShape.setNumPoints(GeometryUtils.numOfVertices(currentRadius)); // 32 default
 			Geometry polygon = gShape.createCircle();
 			
+			// perhaps the order of n-gon points in needed to be different.
+//			var newOrder = polygon.getCoordinates(); // default order
+			var newOrder = GeometryUtils.coordinatesOrderCircular(polygon, pivot, 180, true); // specific coordinate's order
+			
 			// place circle at every vertex of this n-gon to see if it fits
-			for (Coordinate coord : polygon.getCoordinates()) {
+			for (Coordinate coord : newOrder) {
 				if (geometryToFit.contains(geometryFactory.createPoint(coord))) { // only if new center is located within required geometry
 					Geometry testCircle = pipeToPlace.toJTSGeometryOuterSpace(coord);
 					

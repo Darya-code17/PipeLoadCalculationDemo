@@ -112,7 +112,7 @@ public class StrategyNew implements PackingStrategy {
 		
 		// place innerPipe at every point
 		GeometryFactory geometryFactory = new GeometryFactory();
-		for (Coordinate c : GeometryUtils.coordinatesOrder(polygon)) {
+		for (Coordinate c : GeometryUtils.coordinatesOrderRectangular(polygon,false,true)) {
 			if (geometryToFit.contains(geometryFactory.createPoint(c))) { // consider a point only if it's within given geometry
 				var testCircle = innerPipe.toJTSGeometryOuterSpace(c);
 				if (geometryToFit.contains(testCircle)) {
