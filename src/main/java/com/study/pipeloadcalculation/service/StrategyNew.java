@@ -104,8 +104,8 @@ public class StrategyNew implements PackingStrategy {
 		Geometry polygon = GeometryUtils.adaptivePolygon(
 				outerPipe.getCenter(),
 				(outerPipe.getDiameterOuter() / 2 + innerPipe.getDiameterOuter() / 2 // radius of n-gon
-				) * CalculationService.k1 // since pipe's JTS contour isn't perfectly round but edgy, collision calculations are not precise. So there is nessesery to make n-gon a little bigger
-				, CalculationService.k2 // coefficient for more vertices of n-gon
+				) * CalculationService.c1 // since pipe's JTS contour isn't perfectly round but edgy, collision calculations are not precise. So there is nessesery to make n-gon a little bigger
+				, CalculationService.c2 // coefficient for more vertices of n-gon
 		);
 
 //		catchGeometryToDebug((polygon)); // debug

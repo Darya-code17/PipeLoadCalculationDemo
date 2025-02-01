@@ -18,7 +18,7 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 		this.diameterInner = diameterInner;
 		this.diameterOuter = diameterOuter;
 		this.length = length;
-		center = new Coordinate();
+		this.center = new Coordinate();
 	}
 	
 	
@@ -30,6 +30,11 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	
 	public int getDiameterInner() {
 		return diameterInner;
+	}
+	
+	
+	public int getLength() {
+		return length;
 	}
 	
 	
@@ -91,7 +96,7 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	
 	private Geometry jtsCircle(Coordinate center, int radius) {
 //		return geometryFactory.createPoint(center).buffer(radius); // default n-gon
-		return GeometryUtils.adaptivePolygon(center, radius, CalculationService.k3); // more precise n-gon
+		return GeometryUtils.adaptivePolygon(center, radius, CalculationService.c3); // more precise n-gon
 	}
 	
 	
@@ -102,7 +107,6 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 		}
 		return javafxPolygon;
 	}
-	
 	
 	
 	@Override

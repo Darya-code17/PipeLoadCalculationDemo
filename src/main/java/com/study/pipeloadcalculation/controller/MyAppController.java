@@ -1,9 +1,12 @@
 package com.study.pipeloadcalculation.controller;
 
 import com.study.pipeloadcalculation.service.CalculationService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.util.List;
@@ -11,18 +14,12 @@ import java.util.List;
 public class MyAppController {
 	
 	@FXML
-	private Label welcomeText; // todo deprecate later
-	
-	@FXML
 	private Pane drawPane;
 	
-	private CalculationService calculationService;
-	
-	
 	@FXML
-	protected void onHelloButtonClick() { // todo deprecate later
-		welcomeText.setText("Welcome to JavaFX Application!");
-	}
+	private ListView<CalculationService.PackingData> listViewVariations;
+	
+	private final CalculationService calculationService;
 	
 	
 	public MyAppController() {
@@ -34,9 +31,24 @@ public class MyAppController {
 	@FXML
 	private void initialize() {
 		loadData();
-		calculationsReset();
-		calculationsMake();
-		drawResult();
+		getVariations(calculationsMake());
+	}
+	
+	
+	
+	private void getVariations(List<CalculationService.PackingData> returnedList) {
+		ObservableList<CalculationService.PackingData> dataVariations = FXCollections.observableArrayList(returnedList);
+		listViewVariations.setItems(dataVariations);
+	}
+	
+	
+	
+	@FXML
+	private void onVariationClicked(MouseEvent event) {
+		if (event.getClickCount() == 2) {
+			drawPane.getChildren().clear();
+			drawResult(listViewVariations.getSelectionModel().getSelectedItem());
+		}
 	}
 	
 	
@@ -46,22 +58,21 @@ public class MyAppController {
 	}
 	
 	
-	private void calculationsReset() {
-		calculationService.calculationsReset();
-	}
 	
-	
-	private void calculationsMake() {
-		calculationService.calculationsMake();
+	private List<CalculationService.PackingData> calculationsMake() {
+		return calculationService.calculationsMake();
 	}
 	
 	
 	
-	private void drawResult() {
+	private void drawResult(CalculationService.PackingData pd) {
 		addNodesWithStyle(calculationService.drawTruck(), "dynamic-truckTrailer"); // dynamic styles
-		addNodesWithStyle(calculationService.drawFittedPipes(), "dynamic-pipeFitted");
-		addNodesWithStyle(calculationService.drawUnfittedPipes(), "dynamic-pipeUnfitted");
+		addNodesWithStyle(calculationService.drawFittedPipes(pd), "dynamic-pipeFitted");
+		addNodesWithStyle(calculationService.drawUnfittedPipes(pd), "dynamic-pipeUnfitted");
 	}
+	
+	
+	
 	
 	
 	private void addNodesWithStyle(List<Node> list, String style) {
