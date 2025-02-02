@@ -10,11 +10,11 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 
 public class StrategyOld implements PackingStrategy {
 	
-	private CalculationService.PackingData calcUtils;
+	private CalculationService.PackingData packingData;
 	
 	
 	public StrategyOld(CalculationService.PackingData packingData) {
-		this.calcUtils = packingData;
+		this.packingData = packingData;
 	}
 	
 	
@@ -27,7 +27,7 @@ public class StrategyOld implements PackingStrategy {
 				outerPipe.getCenter().y + ((double) outerPipe.getDiameterInner() / 2));
 		int r = 1;
 		int maxRadius = outerPipe.getDiameterInner();
-		return isFitByRadialMethod(startCenter, r, maxRadius, newPipe, calcUtils.getInnerPipeSpace(outerPipe));
+		return isFitByRadialMethod(startCenter, r, maxRadius, newPipe, packingData.getInnerPipeSpace(outerPipe));
 	}
 	
 	
@@ -35,10 +35,10 @@ public class StrategyOld implements PackingStrategy {
 	public boolean fitInContour(TruckTrailer truckTrailer, Pipe newPipe) { /// fit in TRUCK
 		//		 previous method:
 		// start coordinates in the thuck: most left and bottom (according to gravity)
-		Coordinate startCenter = new Coordinate(0, calcUtils.getTruck().getHeight());
-		int maxRadius = Math.max(calcUtils.getTruck().getWidth(), calcUtils.getTruck().getHeight());
+		Coordinate startCenter = new Coordinate(0, packingData.getTruck().getHeight());
+		int maxRadius = Math.max(packingData.getTruck().getWidth(), packingData.getTruck().getHeight());
 		int r = 1;
-		return isFitByRadialMethod(startCenter, r, maxRadius, newPipe, calcUtils.getInnerTruckSpace(truckTrailer)); // old method
+		return isFitByRadialMethod(startCenter, r, maxRadius, newPipe, packingData.getInnerTruckSpace(truckTrailer)); // old method
 		
 	}
 	

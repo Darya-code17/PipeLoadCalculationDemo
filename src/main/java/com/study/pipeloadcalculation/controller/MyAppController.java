@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -15,6 +16,9 @@ public class MyAppController {
 	
 	@FXML
 	private Pane drawPane;
+	
+	@FXML
+	private Label packingDetails;
 	
 	@FXML
 	private ListView<CalculationService.PackingData> listViewVariations;
@@ -45,10 +49,10 @@ public class MyAppController {
 	
 	@FXML
 	private void onVariationClicked(MouseEvent event) {
-		if (event.getClickCount() == 2) {
+//		if (event.getClickCount() == 2) { // todo double mouse click
 			drawPane.getChildren().clear();
 			drawResult(listViewVariations.getSelectionModel().getSelectedItem());
-		}
+//		}
 	}
 	
 	
@@ -69,6 +73,7 @@ public class MyAppController {
 		addNodesWithStyle(calculationService.drawTruck(), "dynamic-truckTrailer"); // dynamic styles
 		addNodesWithStyle(calculationService.drawFittedPipes(pd), "dynamic-pipeFitted");
 		addNodesWithStyle(calculationService.drawUnfittedPipes(pd), "dynamic-pipeUnfitted");
+		packingDetails.setText(pd.toString());
 	}
 	
 	

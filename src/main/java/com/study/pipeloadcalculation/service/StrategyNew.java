@@ -11,30 +11,30 @@ import java.util.Collections;
 
 public class StrategyNew implements PackingStrategy {
 	
-	private CalculationService.PackingData calcUtils;
+	private CalculationService.PackingData packingData;
 	
 	
 	public StrategyNew(CalculationService.PackingData packingData) {
-		this.calcUtils = packingData;
+		this.packingData = packingData;
 	}
 	
 	
 	
 	@Override
 	public boolean fitInContour(Pipe outerPipe, Pipe newPipe) { /// fit in PIPE
-		return isFitByCircularMethod(newPipe, calcUtils.getInnerPipeSpace(outerPipe), outerPipe); // new method
+		return isFitByCircularMethod(newPipe, packingData.getInnerPipeSpace(outerPipe), outerPipe); // new method
 	}
 	
 	
 	@Override
 	public boolean fitInContour(TruckTrailer truckTrailer, Pipe newPipe) { /// fit in TRUCK
-		return isFitByCircularMethod(newPipe, calcUtils.getInnerTruckSpace(truckTrailer), calcUtils.getTruck()); // new method (inscribed circular)
+		return isFitByCircularMethod(newPipe, packingData.getInnerTruckSpace(truckTrailer), packingData.getTruck()); // new method (inscribed circular)
 	}
 	
 	
 	private boolean isFitByCircularMethod(Pipe pipeToPlace, Geometry geometryToFit, Pipe outerPipe) { // place inside the Pipe
 		
-		var listOfInnerPipes = calcUtils.getPipesOf(outerPipe);
+		var listOfInnerPipes = packingData.getPipesOf(outerPipe);
 		
 		if (listOfInnerPipes.isEmpty()) {
 			// outer Pipe is empty inside
@@ -66,7 +66,7 @@ public class StrategyNew implements PackingStrategy {
 	
 	private boolean isFitByCircularMethod(Pipe pipeToPlace, Geometry geometryToFit, TruckTrailer truckTrailer) {// place inside the truck
 		
-		var listOfInnerPipes = calcUtils.getPipesOf(truckTrailer);
+		var listOfInnerPipes = packingData.getPipesOf(truckTrailer);
 		
 		if (listOfInnerPipes.isEmpty()) {
 			// the truck's container is empty

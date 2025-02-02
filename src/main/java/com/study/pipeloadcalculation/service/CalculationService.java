@@ -58,14 +58,18 @@ public class CalculationService {
 	
 	
 	public List<PackingData> calculationsMake() {
-		for (c1 = 0.999; c1 < 1.004; c1 = MathUtils.addValue(c1, 0.001)) {
-			printCoefficients();
-			packingData = new PackingData(data.getPurchaseList(), c1);
-			packingStrategy = new StrategyNew(packingData);
-			calculationsReset();
-			calculationsMake2();
-			packings.add(packingData);
-		}
+//		for (c3 = 2; c3 < 5; c3++) {
+//			for (c2 = 2; c2 < 5; c2++) {
+				for (c1 = 0.999; c1 < 1.004; c1 = MathUtils.addValue(c1, 0.001)) {
+					printCoefficients();
+					packingData = new PackingData(data.getPurchaseList(), c1, c2, c3);
+					packingStrategy = new CombinedStrategy(packingData);
+					calculationsReset();
+					calculationsMake2();
+					packings.add(packingData);
+				}
+//			}
+//		}
 		return packings;
 	}
 	
@@ -154,10 +158,10 @@ public class CalculationService {
 		boolean fitted = false;
 		for (Pipe outerPipe : packingData.getPackedList()) {
 			if (newPipe.getDiameterOuter() < outerPipe.getDiameterOuter()) {
-				System.out.println("Attempt fit pipe [" + newPipe + "]\n\tin the pipe [" + outerPipe + "]");
+//				System.out.println("Attempt fit pipe [" + newPipe + "]\n\tin the pipe [" + outerPipe + "]");
 				fitted = fitInContour(outerPipe, newPipe);
 				if (fitted) {
-					System.out.println("\t\t[V] fitted");
+//					System.out.println("\t\t[V] fitted");
 					newPipe.setTelescopedId(outerPipe);
 					break;
 				}
@@ -238,9 +242,11 @@ public class CalculationService {
 		private TruckTrailer truck; // todo (4) will be list of trucks
 		
 		private final double coef1;
+		private final int coef2;
+		private final int coef3;
 		
 		
-		public PackingData(ArrayList<Pipe> purchaseList, double c1) {
+		public PackingData(ArrayList<Pipe> purchaseList, double c1, int c2, int c3) {
 
 //			this.requestList = new ArrayList<>(purchaseList); // deep copy
 			this.requestList = new ArrayList<>();
@@ -253,6 +259,8 @@ public class CalculationService {
 			this.unpackedList = new ArrayList<>();
 			
 			this.coef1 = c1;
+			this.coef2 = c2;
+			this.coef3 = c3;
 		}
 		
 		
@@ -359,11 +367,12 @@ public class CalculationService {
 		
 		@Override
 		public String toString() {
-			return "PackingData {" +
-				   "fitted: " + packedList.size() +
-				   ", unfitted: " + unpackedList.size() +
-				   ", c1: " + coef1 +
-				   '}';
+			return "c1(%.3f) c2(%d) c3(%d)  %d vs %d".formatted(
+					coef1,
+					coef2,
+					coef3,
+					packedList.size(),
+					unpackedList.size());
 		}
 		
 		
