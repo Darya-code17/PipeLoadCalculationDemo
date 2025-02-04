@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -21,7 +22,11 @@ public class MyAppController {
 	private Label packingDetails;
 	
 	@FXML
+	private Button deleteCurrentVariationButton;
+	
+	@FXML
 	private ListView<CalculationService.PackingData> listViewVariations;
+	
 	
 	private final CalculationService calculationService;
 	
@@ -48,10 +53,18 @@ public class MyAppController {
 	
 	
 	@FXML
+	private void onButtonDeleteCurrent() {
+		var packingData = listViewVariations.getSelectionModel().getSelectedItem();
+		listViewVariations.getItems().remove(packingData);
+	}
+	
+	
+	
+	@FXML
 	private void onVariationClicked(MouseEvent event) {
 //		if (event.getClickCount() == 2) { // todo double mouse click
-			drawPane.getChildren().clear();
-			drawResult(listViewVariations.getSelectionModel().getSelectedItem());
+		drawPane.getChildren().clear();
+		drawResult(listViewVariations.getSelectionModel().getSelectedItem());
 //		}
 	}
 	
@@ -74,9 +87,10 @@ public class MyAppController {
 		addNodesWithStyle(calculationService.drawFittedPipes(pd), "dynamic-pipeFitted");
 		addNodesWithStyle(calculationService.drawUnfittedPipes(pd), "dynamic-pipeUnfitted");
 		packingDetails.setText(pd.toString());
+//		drawPane.setScaleX(0.5);
+//		drawPane.setScaleY(0.5);
+		drawPane.getChildren().add(packingDetails);
 	}
-	
-	
 	
 	
 	

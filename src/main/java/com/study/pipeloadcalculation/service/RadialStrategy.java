@@ -8,12 +8,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
-public class StrategyOld implements PackingStrategy {
+public class RadialStrategy implements PackingStrategy {
 	
 	private CalculationService.PackingData packingData;
 	
 	
-	public StrategyOld(CalculationService.PackingData packingData) {
+	public RadialStrategy(CalculationService.PackingData packingData) {
 		this.packingData = packingData;
 	}
 	

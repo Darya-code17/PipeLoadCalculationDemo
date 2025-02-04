@@ -14,9 +14,9 @@ import java.util.List;
 public class CalculationService {
 	
 	// todo (2) next: few calculations with different coefficient and then choose the best (it will be map)
-	public static double c1 = 1.005; // coefficient(scale) for increasing polygon's offset (inscribed circles, circular method)
-	public static int c2 = 5; // coefficient(multiply) for increasing number of vertices of offsetting polygon
-	public static int c3 = 3; // coefficient(multiply) for increasing number of vertices of pipe (collision checking)
+	public static double c1 = 1.006; // coefficient(scale) for increasing polygon's offset (inscribed circles, circular method)
+	public static int c2 = 6; // coefficient(multiply) for increasing number of vertices of offsetting polygon
+	public static int c3 = 4; // coefficient(multiply) for increasing number of vertices of pipe (collision checking)
 	//
 	private LoadedData data;
 	private PackingStrategy packingStrategy;
@@ -58,17 +58,13 @@ public class CalculationService {
 	
 	
 	public List<PackingData> calculationsMake() {
-//		for (c3 = 2; c3 < 5; c3++) {
-//			for (c2 = 2; c2 < 5; c2++) {
-				for (c1 = 0.999; c1 < 1.004; c1 = MathUtils.addValue(c1, 0.001)) {
-					printCoefficients();
-					packingData = new PackingData(data.getPurchaseList(), c1, c2, c3);
-					packingStrategy = new CombinedStrategy(packingData);
-					calculationsReset();
-					calculationsMake2();
-					packings.add(packingData);
-				}
-//			}
+//		for (c1 = 1.000; c1 < 1.010; c1 = MathUtils.addValue(c1, 0.001)) {
+		printCoefficients();
+		packingData = new PackingData(data.getPurchaseList(), c1, c2, c3);
+		packingStrategy = new CombinedStrategy(packingData);
+		calculationsReset();
+		calculationsMake2();
+		packings.add(packingData);
 //		}
 		return packings;
 	}

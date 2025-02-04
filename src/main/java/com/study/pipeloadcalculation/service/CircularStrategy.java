@@ -9,12 +9,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.Collections;
 
-public class StrategyNew implements PackingStrategy {
+public class CircularStrategy implements PackingStrategy {
 	
 	private CalculationService.PackingData packingData;
 	
 	
-	public StrategyNew(CalculationService.PackingData packingData) {
+	public CircularStrategy(CalculationService.PackingData packingData) {
 		this.packingData = packingData;
 	}
 	
