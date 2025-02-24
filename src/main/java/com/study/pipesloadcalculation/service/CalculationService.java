@@ -1,9 +1,9 @@
-package com.study.pipeloadcalculation.service;
+package com.study.pipesloadcalculation.service;
 
-import com.study.pipeloadcalculation.model.Pipe;
-import com.study.pipeloadcalculation.model.TruckTrailer;
-import com.study.pipeloadcalculation.util.MathUtils;
-import com.vividsolutions.jts.geom.Coordinate;
+import com.study.pipesloadcalculation.model.Pipe;
+import com.study.pipesloadcalculation.model.TruckTrailer;
+import com.study.pipesloadcalculation.util.GeometryUtils;
+import com.study.pipesloadcalculation.util.WarningLog;
 import com.vividsolutions.jts.geom.Geometry;
 import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
@@ -24,6 +24,7 @@ public class CalculationService {
 	private List<PackingData> packings;
 	
 	
+	
 	public CalculationService() {
 		data = new LoadedData();
 		packings = new ArrayList<>(); // PackingData
@@ -31,51 +32,82 @@ public class CalculationService {
 	
 	
 	
-	public void loadData() {
-		data.loadData();
-	}
-	
-	
-	
-	private boolean validated(ArrayList<Pipe> list) {
-		// todo validate all fields and !emptylist
-		return true; // temporary
-	}
-	
-	
-	
-	public void calculationsReset() {
+	public boolean loadData(List<TruckTrailer> listOfTruckTrailers, List<Pipe> listOfPipes) {
+		WarningLog.clear();
+		// todo (3) list of truckTrailers
+		if ((!validatedPipes(listOfPipes)) | (!validatedTruckTrailers(listOfTruckTrailers))) {
+			WarningLog.showWarning();
+			return false;
+		}
 		
-		// reset calculations (nullifying telescoped links)
+		data.loadData(listOfTruckTrailers, listOfPipes);
+		return true;
+	}
+	
+	
+	
+	private boolean validatedTruckTrailers(List<TruckTrailer> trucks) {
+		if ((trucks == null) || (trucks.isEmpty())) {
+			WarningLog.addMessage("information about truck trailer is empty");
+			return false;
+		}
+		var truck = trucks.getFirst();
+		if (truck == null) {
+			WarningLog.addMessage("information about truck trailer is empty");
+			return false;
+		}
+		boolean valid;
+		valid = TruckTrailer.validate(truck); // todo (3) list of Trucks
+		return valid;
+	}
+	
+	
+	
+	private boolean validatedPipes(List<Pipe> list) {
+		if (list.isEmpty()) {
+			WarningLog.addMessage("list of pipes is empty");
+			return false;
+		}
+		boolean valid = true;
+		for (Pipe pipe : list) {
+			if (!Pipe.validate(pipe)) {
+				valid = false;
+			}
+		}
+		return valid;
+	}
+
+
+//	public void calculationsReset() {
+//		// reset calculations (nullifying telescoped links)
 //		data.getPurchaseList().forEach(pipe -> pipe.setTelescopedId(null)); // deep copy
 
 //		packingData.setRequestList(new ArrayList<>());
-		packingData.setPackedList(new ArrayList<>());
-		packingData.setUnpackedList(new ArrayList<>());
-		packingData.setTruck(data.getTruck());
-	}
+//		packingData.setPackedList(new ArrayList<>());
+//		packingData.setUnpackedList(new ArrayList<>());
+//		packingData.setTruck(data.getTruck());
+//	}
 	
 	
 	
-	public List<PackingData> calculationsMake() {
+	public List<PackingData> formPackageVariations() {
 //		for (c1 = 1.000; c1 < 1.010; c1 = MathUtils.addValue(c1, 0.001)) {
-		printCoefficients();
-		packingData = new PackingData(data.getPurchaseList(), c1, c2, c3);
+//		printCoefficients();
+		packingData = new PackingData(data.getPurchaseList(), data.getTruck(), c1, c2, c3);
 		packingStrategy = new CombinedStrategy(packingData);
-		calculationsReset();
-		calculationsMake2();
-		packings.add(packingData);
+//		calculationsReset(); // no need anymore
+		calculationsMake();
+		if (!packingData.getPackedList().isEmpty()) {
+			packings.add(packingData);
+		}
 //		}
 		return packings;
 	}
 	
 	
 	
-	public void calculationsMake2() {
-		var reqList = packingData.getRequestList();
-		if (!validated(reqList)) {
-			return;
-		}
+	public void calculationsMake() {
+		List<Pipe> reqList = packingData.getRequestList();
 		
 		// todo (3) later: (this is rare but) if Pipe's length is smaller than truck's length - it's impossible to fit
 		
@@ -83,16 +115,13 @@ public class CalculationService {
 			Pipe nextPipe = reqList.getFirst();
 			reqList.removeFirst();
 			
-			if ((placeInPipe(nextPipe)) || (placeInTruck(nextPipe))) { // || for checking the both conditions
+			if ((placeInPipe(nextPipe)) || (placeInTruck(nextPipe))) {
 				packingData.getPackedList().add(nextPipe);
 			} else {
 				nextPipe.resetCenter();
 				packingData.getUnpackedList().add(nextPipe);
 			}
 		}
-		
-		System.out.println(packingData);
-		
 	}
 	
 	
@@ -109,14 +138,27 @@ public class CalculationService {
 	
 	
 	
-	public List<Node> drawTruck() {
-		List<Node> elements = new ArrayList<>();
-		// to draw truck
-		javafx.scene.shape.Polygon javafxTruckPolygon = new javafx.scene.shape.Polygon();
-		for (Coordinate coordinate : packingData.truck.getTruckTrailerPolygon().getCoordinates()) {
-			javafxTruckPolygon.getPoints().addAll(coordinate.x, coordinate.y);
+	public List<Node> drawTruck(PackingData pd) {
+		int index = packings.indexOf(pd);
+		if (index == -1) {
+			return new ArrayList<Node>();
+		} else {
+			return drawTruck(index);
 		}
-		elements.add(javafxTruckPolygon);
+	}
+	
+	
+	public List<Node> drawTruck(int numberOfPackingVariant) {
+		List<Node> elements = new ArrayList<>();
+		if (packings == null) return elements;
+		if (packings.isEmpty()) return elements;
+		try {
+			TruckTrailer truckToDraw = packings.get(numberOfPackingVariant).getTruck();
+			Polygon javafxTruckPolygon = GeometryUtils.javafxPolygon(truckToDraw.getTruckTrailerPolygon());
+			elements.add(javafxTruckPolygon);
+		} catch (IndexOutOfBoundsException e) {
+			return elements;
+		}
 		return elements;
 	}
 	
@@ -125,7 +167,7 @@ public class CalculationService {
 	private void drawTextSummary() {
 		// todo (5) later: this text will appear in UI, not in terminal
 		// text summary
-		System.out.println("\nFitted pipe in the truck, size " + data.getTruck().getWidth() + "  х " + data.getTruck().getHeight() + ":");
+		System.out.println("\nFitted pipe in the truck, size " + data.getTruck().getWidth() + "  x " + data.getTruck().getHeight() + ":");
 		packingData.getPackedList().forEach(System.out::println);
 		
 		System.out.println();
@@ -198,7 +240,7 @@ public class CalculationService {
 	
 	
 	private void catchGeometryToDebug(Geometry g) {
-		var javafxPolygon = getJavaFXPolygon(g);
+		Polygon javafxPolygon = GeometryUtils.javafxPolygon(g);
 		data.getDebugList().add(javafxPolygon);
 	}
 	
@@ -210,22 +252,6 @@ public class CalculationService {
 			elements.add(javafxPolygon);
 		});
 		return elements;
-	}
-	
-	
-	
-	private javafx.scene.shape.Polygon getJavaFXPolygon(Geometry g) {
-		return getJavaFXPolygon(g.getCoordinates());
-	}
-	
-	
-	
-	private javafx.scene.shape.Polygon getJavaFXPolygon(Coordinate[] coords) {
-		javafx.scene.shape.Polygon javafxPolygon = new javafx.scene.shape.Polygon();
-		for (Coordinate coordinate : coords) {
-			javafxPolygon.getPoints().addAll(coordinate.x, coordinate.y);
-		}
-		return javafxPolygon;
 	}
 	
 	
@@ -242,7 +268,7 @@ public class CalculationService {
 		private final int coef3;
 		
 		
-		public PackingData(ArrayList<Pipe> purchaseList, double c1, int c2, int c3) {
+		public PackingData(ArrayList<Pipe> purchaseList, TruckTrailer truckTrailer, double c1, int c2, int c3) {
 
 //			this.requestList = new ArrayList<>(purchaseList); // deep copy
 			this.requestList = new ArrayList<>();
@@ -250,6 +276,8 @@ public class CalculationService {
 					new Pipe(pipe.getDiameterOuter(), pipe.getDiameterInner(), pipe.getLength())
 			));
 			
+			// todo (3) it will be list of trucks
+			this.truck = new TruckTrailer(truckTrailer.getWidth(), truckTrailer.getHeight()); // deep copy
 			
 			this.packedList = new ArrayList<>();
 			this.unpackedList = new ArrayList<>();
@@ -281,24 +309,6 @@ public class CalculationService {
 		
 		public TruckTrailer getTruck() {
 			return truck;
-		}
-		
-		
-		
-		public void setPackedList(ArrayList<Pipe> packedList) {
-			this.packedList = packedList;
-		}
-		
-		
-		
-		public void setUnpackedList(ArrayList<Pipe> unpackedList) {
-			this.unpackedList = unpackedList;
-		}
-		
-		
-		
-		public void setTruck(TruckTrailer truck) {
-			this.truck = truck;
 		}
 		
 		
@@ -363,14 +373,10 @@ public class CalculationService {
 		
 		@Override
 		public String toString() {
-			return "c1(%.3f) c2(%d) c3(%d)  %d vs %d".formatted(
-					coef1,
-					coef2,
-					coef3,
+			return "loaded pipes: %d, didn't fit: %d".formatted(
 					packedList.size(),
 					unpackedList.size());
 		}
-		
 		
 	}
 	

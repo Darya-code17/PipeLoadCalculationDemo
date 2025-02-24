@@ -1,4 +1,4 @@
-package com.study.pipeloadcalculation;
+package com.study.pipesloadcalculation;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

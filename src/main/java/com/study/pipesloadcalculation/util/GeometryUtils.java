@@ -1,9 +1,10 @@
-package com.study.pipeloadcalculation.util;
+package com.study.pipesloadcalculation.util;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
+import javafx.scene.shape.Polygon;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -78,6 +79,17 @@ public class GeometryUtils {
 //		ArrayList<> -> Coordinate[]
 		return mutableList.toArray(new Coordinate[0]);
 	}
+	
+	
+	
+	public static Polygon javafxPolygon(Geometry GTSPolygon) {
+		Polygon javafxPolygon = new javafx.scene.shape.Polygon();
+		for (Coordinate coordinate : GTSPolygon.getCoordinates()) {
+			javafxPolygon.getPoints().addAll(coordinate.x, coordinate.y);
+		}
+		return javafxPolygon;
+	}
+	
 	
 	
 }

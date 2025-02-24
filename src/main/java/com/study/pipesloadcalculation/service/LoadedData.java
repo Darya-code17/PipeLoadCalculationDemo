@@ -1,13 +1,14 @@
-package com.study.pipeloadcalculation.service;
+package com.study.pipesloadcalculation.service;
 
-import com.study.pipeloadcalculation.model.Pipe;
-import com.study.pipeloadcalculation.model.TruckTrailer;
+import com.study.pipesloadcalculation.model.Pipe;
+import com.study.pipesloadcalculation.model.TruckTrailer;
 import javafx.scene.shape.Polygon;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public class LoadedData { // todo rename or separate
+public class LoadedData {
 	
 	private static ArrayList<Pipe> purchaseList; // what needs to be loaded
 	// todo (4) next: instead of object truck - List of trucks
@@ -33,23 +34,27 @@ public class LoadedData { // todo rename or separate
 	
 	
 	
-	public void loadData() {
-		
-		loadPipesInformation();
+	public void loadData(List<TruckTrailer> listOfTruckTrailers, List<Pipe> listOfPipes) {
+		purchaseList = new ArrayList<>();
+//		loadPipesInformation(); // quick test
+		purchaseList.addAll(listOfPipes);
 		
 		// sort pipes
 		Collections.sort(purchaseList);
 		Collections.reverse(purchaseList);
 		
 		truck = new TruckTrailer();
-		loadTrucksInformation();
+//		loadTrucksInformation(listOfTruckTrailers); // quick debug
+		if (!listOfTruckTrailers.isEmpty()) {
+			truck.setWidth(listOfTruckTrailers.getFirst().getWidth());
+			truck.setHeight(listOfTruckTrailers.getFirst().getHeight());
+		}
 	}
 	
 	
 	
-	private void loadPipesInformation() {
+	private void loadPipesInformation() { // example
 		// load pipe's size
-		purchaseList = new ArrayList<>();
 		purchaseList.add(new Pipe(416, 400, 6000));
 		purchaseList.add(new Pipe(250, 220, 6000));
 		purchaseList.add(new Pipe(250, 220, 6000));
@@ -65,7 +70,7 @@ public class LoadedData { // todo rename or separate
 	
 	
 	
-	private void loadTrucksInformation() {
+	private void loadTrucksInformation() { // example
 		// load truck-trailer size
 		truck.setWidth(1024);
 		truck.setHeight(512);

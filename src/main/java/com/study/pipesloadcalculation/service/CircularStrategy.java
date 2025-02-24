@@ -1,13 +1,14 @@
-package com.study.pipeloadcalculation.service;
+package com.study.pipesloadcalculation.service;
 
-import com.study.pipeloadcalculation.model.Pipe;
-import com.study.pipeloadcalculation.model.TruckTrailer;
-import com.study.pipeloadcalculation.util.GeometryUtils;
+import com.study.pipesloadcalculation.model.Pipe;
+import com.study.pipesloadcalculation.model.TruckTrailer;
+import com.study.pipesloadcalculation.util.GeometryUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.Collections;
+import java.util.List;
 
 public class CircularStrategy implements PackingStrategy {
 	
@@ -34,7 +35,7 @@ public class CircularStrategy implements PackingStrategy {
 	
 	private boolean isFitByCircularMethod(Pipe pipeToPlace, Geometry geometryToFit, Pipe outerPipe) { // place inside the Pipe
 		
-		var listOfInnerPipes = packingData.getPipesOf(outerPipe);
+		List<Pipe> listOfInnerPipes = packingData.getPipesOf(outerPipe);
 		
 		if (listOfInnerPipes.isEmpty()) {
 			// outer Pipe is empty inside
@@ -43,16 +44,12 @@ public class CircularStrategy implements PackingStrategy {
 					outerPipe.getCenter().x,
 					outerPipe.getCenter().y + outerPipe.getDiameterInner() / 2 - pipeToPlace.getDiameterOuter() / 2 - 1
 			);
-			var testCircle = pipeToPlace.toJTSGeometryOuterSpace(newCenter);
-			if (geometryToFit.contains(testCircle)) {
-				return true;
-			} else {
-				return false;
-			}
+			Geometry testCircle = pipeToPlace.toJTSGeometryOuterSpace(newCenter);
+			return geometryToFit.contains(testCircle);
 		} else {
 			// outer Pipe has some other inner Pipes
 			Collections.sort(listOfInnerPipes);
-			var result = false;
+			boolean result = false;
 			for (Pipe oneOfPipes : listOfInnerPipes.reversed()) {
 				result = circularRevolveInside(pipeToPlace, oneOfPipes, geometryToFit);
 				if (result) {
@@ -66,25 +63,21 @@ public class CircularStrategy implements PackingStrategy {
 	
 	private boolean isFitByCircularMethod(Pipe pipeToPlace, Geometry geometryToFit, TruckTrailer truckTrailer) {// place inside the truck
 		
-		var listOfInnerPipes = packingData.getPipesOf(truckTrailer);
+		List<Pipe> listOfInnerPipes = packingData.getPipesOf(truckTrailer);
 		
 		if (listOfInnerPipes.isEmpty()) {
 			// the truck's container is empty
 			// place as lower and lefter as possible
 			Coordinate newCenter = new Coordinate(
-					pipeToPlace.getDiameterOuter() / 2 + 0, // todo (3) (when there will be list of containers) truckTrailer get x-coord
-					truckTrailer.getHeight() - pipeToPlace.getDiameterOuter() / 2
+					(double) pipeToPlace.getDiameterOuter() / 2 + 0, // todo (3) (when there will be list of containers) truckTrailer get x-coord
+					truckTrailer.getHeight() - (double) pipeToPlace.getDiameterOuter() / 2
 			);
-			var testCircle = pipeToPlace.toJTSGeometryOuterSpace(newCenter);
-			if (geometryToFit.contains(testCircle)) {
-				return true;
-			} else {
-				return false;
-			}
+			Geometry testCircle = pipeToPlace.toJTSGeometryOuterSpace(newCenter);
+			return geometryToFit.contains(testCircle);
 		} else {
 			// truck's container already has some Pipes or Boxes inside
 			Collections.sort(listOfInnerPipes);
-			var result = false;
+			boolean result = false;
 			for (Pipe oneOfPipes : listOfInnerPipes.reversed()) {
 				result = circularRevolveInside(pipeToPlace, oneOfPipes, geometryToFit);
 				if (result) {
@@ -114,7 +107,7 @@ public class CircularStrategy implements PackingStrategy {
 		GeometryFactory geometryFactory = new GeometryFactory();
 		for (Coordinate c : GeometryUtils.coordinatesOrderRectangular(polygon,false,true)) {
 			if (geometryToFit.contains(geometryFactory.createPoint(c))) { // consider a point only if it's within given geometry
-				var testCircle = innerPipe.toJTSGeometryOuterSpace(c);
+				Geometry testCircle = innerPipe.toJTSGeometryOuterSpace(c);
 				if (geometryToFit.contains(testCircle)) {
 					return true;
 				}

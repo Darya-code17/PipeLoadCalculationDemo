@@ -1,7 +1,7 @@
-package com.study.pipeloadcalculation.service;
+package com.study.pipesloadcalculation.service;
 
-import com.study.pipeloadcalculation.model.Pipe;
-import com.study.pipeloadcalculation.model.TruckTrailer;
+import com.study.pipesloadcalculation.model.Pipe;
+import com.study.pipesloadcalculation.model.TruckTrailer;
 
 public class CombinedStrategy implements PackingStrategy {
 	

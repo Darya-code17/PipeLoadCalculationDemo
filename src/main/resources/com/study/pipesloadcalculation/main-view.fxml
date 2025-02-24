@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="4.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.study.pipesloadcalculation.controller.MyAppController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="2.0">
+               <children>
+                <Button fx:id="btnAddTruckTrailer" mnemonicParsing="false" onAction="#onButtonAddTruckTrailer" prefWidth="130.0" text="Add truck trailer" />
+                  <Button fx:id="btnRemoveTruckTrailer" mnemonicParsing="false" onAction="#onButtonDeleteTruck" prefWidth="130.0" text="Remove truck trailer" />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
+            <TableView fx:id="truckTrailerTableView" editable="true" minHeight="64.0" prefHeight="100.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></TableView>
+         </children>
+         <VBox.margin>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="2.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onButtonAddPipe" prefWidth="130.0" text="Add pipe" />
+                  <Button mnemonicParsing="false" onAction="#onButtonDeletePipe" prefWidth="130.0" text="Remove pipe" />
+               </children>
+            </VBox>
+            <TableView fx:id="pipeTableView" editable="true" minHeight="150.0" prefHeight="150.0" prefWidth="400.0" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onButtonFillWithExample" text="fill with example">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#onButtonCalculate" text="Calculate" />
+         </children>
+      </HBox>
+      <HBox alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT">
+         <children>
+            <Pane fx:id="drawPane" />
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="click for preview" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <ListView fx:id="listViewVariations" minWidth="200.0" onMouseClicked="#onVariationClicked" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+   </padding>
+</VBox>

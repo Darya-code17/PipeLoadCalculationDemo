@@ -1,11 +1,13 @@
-package com.study.pipeloadcalculation.model;
+package com.study.pipesloadcalculation.model;
 
-import com.study.pipeloadcalculation.service.CalculationService;
-import com.study.pipeloadcalculation.util.GeometryUtils;
+import com.study.pipesloadcalculation.service.CalculationService;
+import com.study.pipesloadcalculation.util.GeometryUtils;
+import com.study.pipesloadcalculation.util.WarningLog;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import javafx.scene.shape.Polygon;
 
-public class Pipe implements Comparable<Pipe>, Telescopable {
+public class Pipe implements Comparable<Pipe>, Telescopable, TableFillable {
 	
 	private Telescopable telescopedId;
 	private int diameterOuter; // unit: mm
@@ -14,11 +16,34 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	private Coordinate center;
 	
 	
+	
 	public Pipe(int diameterOuter, int diameterInner, int length) {
 		this.diameterInner = diameterInner;
 		this.diameterOuter = diameterOuter;
 		this.length = length;
 		this.center = new Coordinate();
+	}
+	
+	
+	
+	public static boolean validate(Pipe pipe) {
+		boolean valid = true;
+		
+		if (pipe.getDiameterOuter() == 0) {
+			WarningLog.addMessage("empty parameter for pipe (outer diameter)");
+			valid = false;
+		} else if (pipe.getDiameterInner() == 0) {
+			WarningLog.addMessage("empty parameter for pipe (inner diameter)");
+			valid = false;
+		} else if (pipe.getLength() == 0) {
+			WarningLog.addMessage("empty parameter for pipe (pipe length)");
+			valid = false;
+		} else if (pipe.getDiameterInner() >= pipe.getDiameterOuter()) {
+			WarningLog.addMessage("wrong value: outer diameter can't be smaller than inner diameter");
+			valid = false;
+		}
+		
+		return valid;
 	}
 	
 	
@@ -45,6 +70,21 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	
 	public void setTelescopedId(Telescopable telescopedId) {
 		this.telescopedId = telescopedId;
+	}
+	
+	
+	public void setDiameterInner(int diameterInner) {
+		this.diameterInner = diameterInner;
+	}
+	
+	
+	public void setDiameterOuter(int diameterOuter) {
+		this.diameterOuter = diameterOuter;
+	}
+	
+	
+	public void setLength(int length) {
+		this.length = length;
 	}
 	
 	
@@ -100,12 +140,8 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	}
 	
 	
-	public javafx.scene.shape.Polygon toJavaFXPolygon() {
-		javafx.scene.shape.Polygon javafxPolygon = new javafx.scene.shape.Polygon();
-		for (Coordinate coordinate : toJTSGeometryPrecise().getCoordinates()) {
-			javafxPolygon.getPoints().addAll(coordinate.x, coordinate.y);
-		}
-		return javafxPolygon;
+	public Polygon toJavaFXPolygon() {
+		return GeometryUtils.javafxPolygon(toJTSGeometryPrecise());
 	}
 	
 	
@@ -113,6 +149,7 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 	public int compareTo(Pipe other) {
 		return Integer.compare(this.getDiameterOuter(), other.getDiameterOuter());
 	}
+	
 	
 	
 	@Override
@@ -125,6 +162,4 @@ public class Pipe implements Comparable<Pipe>, Telescopable {
 						(int) center.y
 				);
 	}
-	
-	
 }

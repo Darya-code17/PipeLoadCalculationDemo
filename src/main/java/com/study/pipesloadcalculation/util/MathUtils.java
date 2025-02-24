@@ -1,4 +1,4 @@
-package com.study.pipeloadcalculation.util;
+package com.study.pipesloadcalculation.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
