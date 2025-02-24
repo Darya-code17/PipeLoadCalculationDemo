@@ -63,8 +63,8 @@ public class RadialStrategy implements PackingStrategy {
 			Geometry polygon = gShape.createCircle();
 			
 			// perhaps the order of n-gon points in needed to be different.
-//			var newOrder = polygon.getCoordinates(); // default order
-			var newOrder = GeometryUtils.coordinatesOrderCircular(polygon, pivot, 180, true); // specific coordinate's order
+//			Coordinate[] newOrder = polygon.getCoordinates(); // default order
+			Coordinate[] newOrder = GeometryUtils.coordinatesOrderCircular(polygon, pivot, 180, true); // specific coordinate's order
 			
 			// place circle at every vertex of this n-gon to see if it fits
 			for (Coordinate coord : newOrder) {

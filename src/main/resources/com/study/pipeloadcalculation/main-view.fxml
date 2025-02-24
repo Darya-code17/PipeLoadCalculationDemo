@@ -1,31 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.study.pipeloadcalculation.controller.MyAppController">
+<VBox spacing="4.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.study.pipeloadcalculation.controller.MyAppController">
    <children>
-      <VBox minWidth="400.0">
+      <Button layoutX="10.0" layoutY="303.0" mnemonicParsing="false" onAction="#onButtonFillWithExample" text="fill with example">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Label fx:id="packingDetails" prefHeight="26.0" prefWidth="346.0" text="info">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Label>
-            <Button fx:id="deleteCurrentVariationButton" mnemonicParsing="false" onAction="#onButtonDeleteCurrent" text="Delete" />
-            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="2.0">
                <children>
-                  <ListView fx:id="listViewVariations" onMouseClicked="#onVariationClicked" prefHeight="200.0" prefWidth="200.0" />
-                  <ListView fx:id="deletedVariationsList" onMouseClicked="#onVariationClicked" prefHeight="200.0" prefWidth="200.0" />
+                <Button fx:id="btnAddTruckTrailer" mnemonicParsing="false" onAction="#onButtonAddTruckTrailer" prefWidth="130.0" text="Add truck trailer" />
+                  <Button fx:id="btnRemoveTruckTrailer" mnemonicParsing="false" onAction="#onButtonDeleteTruck" prefWidth="130.0" text="Remove truck trailer" />
                </children>
-            </HBox>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
+            <TableView fx:id="truckTrailerTableView" editable="true" minHeight="64.0" prefHeight="100.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></TableView>
          </children>
-      </VBox>
-      <Pane fx:id="drawPane" minHeight="400.0" minWidth="400.0" HBox.hgrow="SOMETIMES" />
+         <VBox.margin>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox>
+         <children>
+            <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="2.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onButtonAddPipe" prefWidth="130.0" text="Add pipe" />
+                  <Button mnemonicParsing="false" onAction="#onButtonDeletePipe" prefWidth="130.0" text="Remove pipe" />
+               </children>
+            </VBox>
+            <TableView fx:id="pipeTableView" editable="true" minHeight="150.0" prefHeight="150.0" prefWidth="400.0" HBox.hgrow="ALWAYS" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </VBox.margin>
+      </HBox>
+      <Button defaultButton="true" mnemonicParsing="false" onAction="#onButtonCalculate" text="Calculate" />
+      <HBox alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT">
+         <children>
+            <Pane fx:id="drawPane" />
+            <ListView fx:id="listViewVariations" minWidth="200.0" onMouseClicked="#onVariationClicked" prefHeight="200.0" prefWidth="200.0" />
+            <Button mnemonicParsing="false" onAction="#onButtonDeleteCurrentPacking" text="Delete" />
+         </children>
+      </HBox>
    </children>
-</HBox>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+   </padding>
+</VBox>
