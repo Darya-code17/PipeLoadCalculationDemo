@@ -131,6 +131,7 @@ public class MyAppController {
 	@FXML
 	private void onButtonFillWithExample() {
 		pipeTableView.getItems().clear();
+		pipeTableCountValues.clear();
 		addPipeTableRow(416, 400, 6000, 1);
 		addPipeTableRow(250, 220, 6000, 2);
 		addPipeTableRow(110, 100, 6000, 8);
