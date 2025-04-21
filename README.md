@@ -60,8 +60,8 @@ After starting the application, simply follow the on-screen instructions to ente
 ### Limitations  
 These features are **currently in development** and will be **available in the full version**:  
 - Multi-container support is planned for the commercial version.  
-- The ability to specify the quantity of identical pipes in a single entry is under development.  
 - Persistent data storage will be introduced, ensuring information is saved after closing the application.  
+- Upcoming improvements will refine algorithms for optimal placement and arrangement
 
 ### Contact
 

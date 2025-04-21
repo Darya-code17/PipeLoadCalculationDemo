@@ -4,6 +4,7 @@ import com.study.pipesloadcalculation.model.Pipe;
 import com.study.pipesloadcalculation.model.TruckTrailer;
 import com.study.pipesloadcalculation.service.CalculationService;
 import com.study.pipesloadcalculation.util.WarningLog;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.util.StringConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -28,6 +30,8 @@ public class MyAppController {
 	
 	@FXML
 	private TableView<Pipe> pipeTableView;
+	// Standalone columns in the table, independent of Pipe class:
+	List<Integer> pipeTableCountValues = new ArrayList<>(); // "count" column
 	
 	@FXML
 	private TableView<TruckTrailer> truckTrailerTableView;
@@ -58,6 +62,7 @@ public class MyAppController {
 	private void initialize() {
 		prepareTableInput();
 		prepareDrawPane();
+		onButtonFillWithExample(); // comfortable presentation
 	}
 	
 	
@@ -76,7 +81,8 @@ public class MyAppController {
 	
 	@FXML
 	private void onButtonAddPipe() {
-		pipeTableView.getItems().add(new Pipe(300, 290, 3000));
+		addPipeTableRow(300, 290, 3000, 1);
+		pipeTableView.refresh();
 	}
 	
 	
@@ -92,7 +98,13 @@ public class MyAppController {
 	private void onButtonDeletePipe() {
 		Pipe currentPipe = pipeTableView.getSelectionModel().getSelectedItem();
 		if (currentPipe != null) {
+			
+			int indexOfPipeToDelete = pipeTableView.getItems().indexOf(currentPipe);
+			
 			pipeTableView.getItems().remove(currentPipe);
+			pipeTableCountValues.remove(indexOfPipeToDelete);
+			
+			pipeTableView.refresh();
 		}
 	}
 	
@@ -119,21 +131,26 @@ public class MyAppController {
 	@FXML
 	private void onButtonFillWithExample() {
 		pipeTableView.getItems().clear();
-		pipeTableView.getItems().addAll(List.of(
-				new Pipe(416, 400, 6000),
-				new Pipe(250, 220, 6000),
-				new Pipe(250, 220, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000),
-				new Pipe(110, 100, 6000)
-		));
+		addPipeTableRow(416, 400, 6000, 1);
+		addPipeTableRow(250, 220, 6000, 2);
+		addPipeTableRow(110, 100, 6000, 8);
+		pipeTableView.refresh();
+		
 		truckTrailerTableView.getItems().clear();
 		truckTrailerTableView.getItems().add(new TruckTrailer(1024, 512));
+	}
+	
+	
+	
+	private void addPipeTableRow(Integer diameterOuter, Integer diameterInner, Integer length, Integer count) {
+		pipeTableView.getItems().add(new Pipe(
+				diameterOuter, // column 0
+				diameterInner, // column 1
+				length         // column 2
+		));
+		pipeTableCountValues.add(
+				count          // column 3
+		);
 	}
 	
 	
@@ -185,9 +202,7 @@ public class MyAppController {
 		
 		/// pipes
 		
-		List<Pipe> pipes = List.of(
-				new Pipe(300, 280, 3000),
-				new Pipe(300, 280, 3000));
+		List<Pipe> pipes = List.of(); // empry table initialy
 		
 		pipeTableView.getItems().setAll(pipes);
 		
@@ -206,7 +221,28 @@ public class MyAppController {
 		columnLength.setCellFactory(TextFieldTableCell.forTableColumn(integerStringConverter));
 		columnLength.setOnEditCommit(createEditCommitHandler(Pipe::setLength));
 		
-		pipeTableView.getColumns().addAll(columnOuterDiameter, columnInnerDiameter, columnLength);
+		// Integer, not connected to object's field
+		TableColumn<Pipe, Integer> columnCount = new TableColumn<>("count");
+		columnCount.setCellFactory(TextFieldTableCell.forTableColumn(integerStringConverter));
+		columnCount.setOnEditCommit(event -> {
+			Integer newValue = event.getNewValue();
+			if (newValue != null && newValue >= 0) {
+				pipeTableCountValues.set( // stores in separate data than Pipe
+						event.getTableView().getSelectionModel().getSelectedIndex(),
+						newValue);
+			} else {
+				WarningLog.showWarning("Value must be >= 0");
+			}
+			event.getTableView().refresh();
+		});
+		columnCount.setCellValueFactory(cellData -> {
+			Pipe p = cellData.getValue();
+			int id = pipeTableView.getItems().indexOf(p);
+			return new SimpleObjectProperty<>(pipeTableCountValues.get(id));
+		});
+		
+		
+		pipeTableView.getColumns().addAll(columnOuterDiameter, columnInnerDiameter, columnLength, columnCount);
 		
 		
 		// todo (3) temporary unavailable until there will be multiple truck trailers
@@ -264,8 +300,16 @@ public class MyAppController {
 	
 	private boolean transmitDataToService() {
 		List<TruckTrailer> listOfTruckTrailers = truckTrailerTableView.getItems().stream().toList();
-		List<Pipe> listOfPipes = pipeTableView.getItems().stream().toList();
+		List<Pipe> listOfPipes = new ArrayList<>();
 		
+		for (int i = 0; i < pipeTableView.getItems().size(); i++) {
+			var pipe = pipeTableView.getItems().get(i);
+			var count = pipeTableCountValues.get(i);
+			for (int j = 0; j < count; j++) {
+				listOfPipes.add(
+						new Pipe(pipe.getDiameterOuter(), pipe.getDiameterInner(), pipe.getLength()));
+			}
+		}
 		return calculationService.loadData(listOfTruckTrailers, listOfPipes);
 	}
 	
