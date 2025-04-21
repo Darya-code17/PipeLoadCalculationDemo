@@ -91,7 +91,9 @@ public class MyAppController {
 	@FXML
 	private void onButtonDeletePipe() {
 		Pipe currentPipe = pipeTableView.getSelectionModel().getSelectedItem();
-		pipeTableView.getItems().remove(currentPipe);
+		if (currentPipe != null) {
+			pipeTableView.getItems().remove(currentPipe);
+		}
 	}
 	
 	
@@ -99,7 +101,9 @@ public class MyAppController {
 	@FXML
 	private void onButtonDeleteTruck() {
 		TruckTrailer currentTruckTrailer = truckTrailerTableView.getSelectionModel().getSelectedItem();
-		truckTrailerTableView.getItems().remove(currentTruckTrailer);
+		if (currentTruckTrailer != null) {
+			truckTrailerTableView.getItems().remove(currentTruckTrailer);
+		}
 	}
 	
 	

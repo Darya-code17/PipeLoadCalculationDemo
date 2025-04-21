@@ -22,7 +22,9 @@ public class WarningLog {
 	
 	
 	public static void addMessage(String messageText) {
-		warnings.add(messageText);
+		if (!warnings.contains(messageText)) {
+			warnings.add(messageText);
+		}
 	}
 	
 	
@@ -52,8 +54,6 @@ public class WarningLog {
 		String message = String.join("\n", warnings);
 		
 		showWarning(message);
-		
-	
 	}
 	
 	
